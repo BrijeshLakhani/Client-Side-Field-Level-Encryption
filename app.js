@@ -21,66 +21,73 @@ const getDb = async () => {
   });
 
   app.get("/login", (req, res) => {
-    res.render("login");
-    console.log("re-direfct to login: ");
+    res.render("login", { error: null, success: null });
   });
 
   app.get("/register", (req, res) => {
-    console.log("re-direfct to register: ");
-    res.render("register");
+    res.render("register", { errormessage: null });
   });
 
   app.get("/logout", (req, res) => {
-    res.render("home");
-    console.log("logout successful");
+    res.render("home", { success: "logout successfully" });
   });
 
   app.post("/register", async (req, res) => {
     const { email, firstName, lastName, mobile, password } = req.body;
+    let errormessage = null;
     try {
+      if (password.length < 6) {
+        errormessage = "Password should be at least 6 characters long.";
+        res.render("register", { errormessage });
+      } else {
       await user
         .insertOne({
           email: email,
           firstName: firstName,
           lastName: lastName,
           "key-id": "demo-data-key",
-          mobile: parseInt(mobile),
+          mobile: mobile,
           password: password,
         })
         .then((result) => {
-          console.log(`Inserted ${JSON.stringify(result)}.`);
-          res.render("login");
+          const success = "you are successfully registered";
+          res.render("login", { error: null, success: success });
         })
-        .catch((err) => {
-          throw err;
+        .catch((error) => {
+          console.log("error: ", error);
+          errormessage = error;
+          res.render("register", { errormessage });
         });
+      }
     } catch (error) {
-      console.log("Error: ", error);
+      console.log("error: ", error);
     }
   });
 
   app.post("/login", async (req, res) => {
-    const username = req.body.username;
-    const password = req.body.password;
-
+    const { username, password } = req.body;
+    let error = null;
     try {
       const foundUser = await user.findOne({ email: username });
-
-      if (foundUser && foundUser.password == password) {
-        res.render("secrets");
-        console.log("Login successful");
+      console.log("foundUser: ", foundUser);
+      if (foundUser != null) {
+        if (foundUser && foundUser.password == password) {
+          const success = "Login successfully";
+          res.render("secrets", { success });
+          // console.log("Login successfully");
+        } else {
+          error = "Invalid password ⚠";
+          res.render("login", { error });
+        }
       } else {
-        console.log("password: ", password);
-        console.log("foundUser.password: ", foundUser.password);
-        console.log("Wrong credentials");
+        error = "Invalid username or password ⚠";
+        res.render("login", { error });
       }
     } catch (error) {
-      console.log("Error: ", error);
+      error = "A network error occurred, Please try again";
+      res.render("login", { error });
     }
   });
-
-  //   const userDetails = await user.find({}).toArray();
-  //   console.log("user: ", userDetails);
 };
 getDb();
 

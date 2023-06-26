@@ -7,20 +7,55 @@
     <div class="col-sm-8">
       <div class="card">
         <div class="card-body">
-
           <!-- Makes POST request to /login route -->
           <form action="/login" method="POST">
+            <% if (success) { %>
+            <div id="success" class="alert alert-success mt-3">
+              <%= success %>
+            </div>
+            <% } %>
+
             <div class="form-group">
               <label for="email">Email</label>
-              <input type="email" class="form-control" name="username" required>
+              <input
+                type="email"
+                class="form-control"
+                name="username"
+                required
+              />
             </div>
             <div class="form-group">
               <label for="password">Password</label>
-              <input type="password" class="form-control" name="password" required>
+              <input
+                type="password"
+                class="form-control"
+                name="password"
+                required
+              />
             </div>
             <button type="submit" class="btn btn-dark">Login</button>
-          </form>
 
+            <% if (error) { %>
+            <div id="error" class="alert alert-danger mt-3"><%= error %></div>
+            <% } %>
+
+            <script>
+              // Hide the error message after 3 seconds
+              setTimeout(() => {
+                const errorMessage = document.getElementById("error");
+                if (errorMessage) {
+                  errorMessage.style.display = "none";
+                }
+              }, 3000);
+              // Hide the success message after 3 seconds
+              setTimeout(() => {
+                const successMessage = document.getElementById("success");
+                if (successMessage) {
+                  successMessage.style.display = "none";
+                }
+              }, 3000);
+            </script>
+          </form>
         </div>
       </div>
     </div>
@@ -35,7 +70,6 @@
         </div>
       </div>
     </div> -->
-
   </div>
 </div>
 

@@ -6,32 +6,62 @@
     <div class="col-sm-8">
       <div class="card">
         <div class="card-body">
-
           <!-- Makes POST request to /register route -->
           <form action="/register" method="POST">
             <div class="form-group">
               <label for="email">Email</label>
-              <input type="email" class="form-control" name="email" required>
+              <input type="email" class="form-control" name="email" required />
             </div>
             <div class="form-group">
               <label for="firstName">First Name</label>
-              <input type="text" class="form-control" name="firstName" required>
+              <input
+                type="text"
+                class="form-control"
+                name="firstName"
+                required
+              />
             </div>
             <div class="form-group">
               <label for="lastName">Last Name</label>
-              <input type="text" class="form-control" name="lastName" required>
+              <input
+                type="text"
+                class="form-control"
+                name="lastName"
+                required
+              />
             </div>
             <div class="form-group">
               <label for="mobile">Mobile Number</label>
-              <input type="text" class="form-control" name="mobile" required>
+              <input type="text" class="form-control" name="mobile" required />
             </div>
             <div class="form-group">
-              <label for="password">Password</label> 
-              <input type="password" class="form-control" name="password" required>
+              <label for="password">Password</label>
+              <input
+                type="password"
+                class="form-control"
+                name="password"
+                required
+              />
             </div>
             <button type="submit" class="btn btn-dark">Register</button>
-          </form>
 
+            <% if (errormessage) { %>
+            <div id="error" class="alert alert-danger mt-3">
+              <%= errormessage %>
+            </div>
+            <% } %>
+
+            <script>
+              // Hide the error message after 3 seconds
+              setTimeout(() => {
+                const errorMessage = document.getElementById("error");
+                if (errorMessage) {
+                  errorMessage.style.display = "none";
+                }
+              }, 3000);
+
+            </script>
+          </form>
         </div>
       </div>
     </div>
@@ -46,7 +76,6 @@
         </div>
       </div>
     </div> -->
-
   </div>
 </div>
 

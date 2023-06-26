@@ -1,15 +1,25 @@
 <%- include('partials/header') %>
 
-
 <div class="jumbotron centered">
   <div class="container">
+    <% if (success) { %>
+    <div id="success" class="alert alert-success mt-3"><%= success %></div>
+    <% } %>
     <i class="fas fa-key fa-6x"></i>
     <h1 class="display-3">Secrets</h1>
     <p class="lead">Don't keep your secrets, share them anonymously!</p>
-    <hr>
+    <hr />
     <a class="btn btn-light btn-lg" href="/register" role="button">Register</a>
     <a class="btn btn-dark btn-lg" href="/login" role="button">Login</a>
 
+    <script>
+      setTimeout(() => {
+        const successMessage = document.getElementById("success");
+        if (successMessage) {
+          successMessage.style.display = "none";
+        }
+      }, 3000);
+    </script>
   </div>
 </div>
 
