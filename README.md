@@ -22,9 +22,9 @@ This README would normally document whatever steps are necessary to get your app
 * Other community or team contact
 
 ## setup Mongodb
-1. Install MongoDB Enterprise Server [mongodb offical](https://www.mongodb.com/try/download/enterprise)
+1. Install MongoDB Enterprise Server [MongoDB offical](https://www.mongodb.com/try/download/enterprise)
 2. Install crypt_shared [packages](https://www.mongodb.com/try/download/enterprise)
-3. Insatll MongoDB compass (https://www.mongodb.com/try/download/compass)
+3. Insatll MongoDB compass [MongoDB Compass](https://www.mongodb.com/try/download/compass)
 3. set in Environment variable path
 4. run in terminal: ```mongocryptd```
 
