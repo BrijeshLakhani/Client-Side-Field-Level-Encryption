@@ -4,7 +4,6 @@ const { MongoClient, Binary } = mongodb;
 
 const credentials = {
     // Mongo Paths + URI
-    // MONGODB_URI: "mongodb+srv://brijesh-lakhani-40:bR!jESH%40TSPL@cluster0.jzeejck.mongodb.net/?retryWrites=true&w=majority",
     MONGODB_URI: "mongodb://localhost:27017",
     // SHARED_LIB_PATH: "C:\\Program Files\\MongoDB\\Server\\6.0\\bin\\mongo_crypt_v1.dill",
   };
