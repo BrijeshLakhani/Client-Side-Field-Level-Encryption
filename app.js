@@ -71,30 +71,24 @@ const getDb = async () => {
   app.get("/table", async (req, res) => {
     const { search, firstName, lastName } = req.query;
     console.log("search: ", search);
-    // const filter = {
-    //   $or: [
-    //     // { firstName: { $regex: regexQuery } },
-    //     { lastName: "patel" },
-    //     // { lastName: { $regex: search } },
-    //     // { mobile: { $regex: regexQuery } },
-    //     // { email: { $regex: regexQuery } }
-    //   ],
-    // };
+
     try {
       const foundUsers = await user
         .find({
           $or: [
-            { firstName: { $regex: search } },
-            // { lastName: search },
+            // { firstName: { $regex: search } },
+            { lastName: { $regex: search } },
           ],
         })
         .toArray();
       console.log("foundUsers: ", foundUsers);
-      res.render("secrets", { success: null, data: foundUsers });
+      res.render("secrets", { success: null, error: null, data: foundUsers });
       // return foundUsers;
     } catch (error) {
       console.error(error);
-      throw error;
+      const data = await getAllUser();
+      res.render("secrets", { success: null, error: error, data: data });
+      // throw error;
     }
   });
 
@@ -108,7 +102,7 @@ const getDb = async () => {
           const success = "Login successfully";
           const data = await getAllUser();
           // console.log('data: ', data);
-          res.render("secrets", { success, data: data });
+          res.render("secrets", { success, error: null, data: data });
         } else {
           error = "Invalid password ⚠";
           res.render("login", { error });
