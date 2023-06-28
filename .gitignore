@@ -19,5 +19,4 @@ node_modules/
 jspm_packages/
 
 # DOCS
-master-key.txt
 mongocryptd.pid
