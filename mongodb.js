@@ -4,7 +4,7 @@ const { MongoClient, Binary } = mongodb;
 
 const secertDB = "userDB";
 const dataCollectionName = "users";
-var namespace = `${secertDB}.${dataCollectionName}`;
+const namespace = `${secertDB}.${dataCollectionName}`;
 // start-kmsproviders
 const fs = require("fs");
 const provider = "local";
@@ -22,6 +22,7 @@ const keyVaultNamespace = "demoFLE.__keystore";
 // end-key-vault
 
 // start-schema
+const dataKey = "Zm/TkWkFRVWRaaEYU932mw==";
 const schema = {
   bsonType: "object",
   encryptMetadata: {
@@ -49,52 +50,29 @@ const schema = {
   },
 };
 
-// const schema = {
-//   bsonType: "object",
-//   encryptMetadata: {
-//     keyId: "/key-id",
-//   },
-//   properties: {
-//     insurance: {
-//       bsonType: "object",
-//       properties: {
-//         policyNumber: {
-//           encrypt: {
-//             bsonType: "int",
-//             algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-//           },
-//         },
-//       },
-//     },
-//     medicalRecords: {
-//       encrypt: {
-//         bsonType: "array",
-//         algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-//       },
-//     },
-//     bloodType: {
-//       encrypt: {
-//         bsonType: "string",
-//         algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-//       },
-//     },
-//     ssn: {
-//       encrypt: {
-//         bsonType: "int",
-//         algorithm: "AEAD_AES_256_CBC_HMAC_SHA_512-Random",
-//       },
-//     },
-//   },
-// };
 var patientSchema = {};
 patientSchema[namespace] = schema;
 // console.log('patientSchema: ', patientSchema);
 // end-schema
 
+// start encryptedFieldsMap
+const encryptedFieldsMap = {
+  namespace: {
+    fields: [
+      {
+        path: 'lastName',
+        encryptedFieldType: 'string'
+      }
+    ]
+  }
+};
+// end encryptedFieldsMap
+
 // start-extra-options
 const extraOptions = {
   mongocryptdSpawnPath:
     "C:\\Program Files\\MongoDB\\Server\\6.0\\bin\\mongo_crypt_v1.dll",
+    mongocryptdBypassSpawn : true,
 };
 // end-extra-options
 

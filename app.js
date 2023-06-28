@@ -40,28 +40,67 @@ const getDb = async () => {
         errormessage = "Password should be at least 6 characters long.";
         res.render("register", { errormessage });
       } else {
-      await user
-        .insertOne({
-          email: email,
-          firstName: firstName,
-          lastName: lastName,
-          "key-id": "demo-data-key",
-          mobile: mobile,
-          password: password,
-        })
-        .then((result) => {
-          const success = "you are successfully registered";
-          res.render("login", { error: null, success: success });
-        })
-        .catch((error) => {
-          console.log("error: ", error);
-          errormessage = error;
-          res.render("register", { errormessage });
-        });
+        await user
+          .insertOne({
+            email: email,
+            firstName: firstName,
+            lastName: lastName,
+            "key-id": "demo-data-key",
+            mobile: mobile,
+            password: password,
+          })
+          .then((result) => {
+            const success = "you are successfully registered";
+            res.render("login", { error: null, success: success });
+          })
+          .catch((error) => {
+            console.log("error: ", error);
+            errormessage = error;
+            res.render("register", { errormessage });
+          });
       }
     } catch (error) {
       console.log("error: ", error);
     }
+  });
+
+  async function getAllUser() {
+    return await user.find({}).toArray();
+  }
+
+  app.get("/table", async (req, res) => {
+    const { search, firstName, lastName } = req.query;
+    console.log('search: ', search);
+    // const filter = {
+    //   $or: [
+    //     // { firstName: { $regex: regexQuery } },
+    //     { lastName: "patel" },
+    //     // { lastName: { $regex: search } },
+    //     // { mobile: { $regex: regexQuery } },
+    //     // { email: { $regex: regexQuery } }
+    //   ],
+    // };
+    try {
+      const foundUsers = await user.findOne({ lastName: "patel" });
+      console.log("foundUsers: ", foundUsers);
+      return foundUsers;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+
+    // const searchFilter = {
+    //   $or: [
+    //     { firstName: search },
+    //     { lastName: search },
+    //     { email: search },
+    //     // { mobile: search },
+    //   ],
+    // };
+    // console.log('searchFilter: ', searchFilter);
+
+    // const searchData = await user.find({firstName: search}).toArray();
+    // console.log('searchData: ', searchData);
   });
 
   app.post("/login", async (req, res) => {
@@ -69,12 +108,12 @@ const getDb = async () => {
     let error = null;
     try {
       const foundUser = await user.findOne({ email: username });
-      console.log("foundUser: ", foundUser);
       if (foundUser != null) {
         if (foundUser && foundUser.password == password) {
           const success = "Login successfully";
-          res.render("secrets", { success });
-          // console.log("Login successfully");
+          const data = await getAllUser();
+          // console.log('data: ', data);
+          res.render("secrets", { success, data: data });
         } else {
           error = "Invalid password ⚠";
           res.render("login", { error });
