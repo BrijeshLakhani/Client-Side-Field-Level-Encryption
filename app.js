@@ -1,20 +1,39 @@
+const kms = require("./kms");
+require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
+
+const kmsClient = kms.localCsfleHelper();
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 app.use(bodyParser.json());
-const clientPromise = require("./mongodb");
-
 const DBName = "userDB";
-const dataCollectionName = "users";
+const CollectionName = "users";
 
-const getDb = async () => {
-  const client = await clientPromise;
-  // console.log('client: ', client);
-  const db = client.db(DBName);
-  const user = db.collection(dataCollectionName);
+const main = async () => {
+  let dataKey = "10BxjMS8T0GvMqnkuMZk8Q=="; // change this to the base64 encoded data key generated from make-data-key.js
+  if (dataKey === null) {
+    // Error.stackTraceLimit = ed
+    let err = new Error(
+      `dataKey is required.
+Run make-data-key.js and ensure you copy and paste the output into client.js
+    `
+    );
+    throw err;
+  }
+
+  regularClient = await kmsClient.getRegularClient();
+  let schemaMap = kmsClient.createJsonSchemaMap(dataKey);
+  csfleClient = await kmsClient.getCsfleEnabledClient(schemaMap);
+
+  const regularClientPatientsColl = regularClient
+    .db(DBName)
+    .collection(CollectionName);
+  const csfleClientPatientsColl = csfleClient
+    .db(DBName)
+    .collection(CollectionName);
 
   app.get("/", (req, res) => {
     res.render("home");
@@ -34,18 +53,19 @@ const getDb = async () => {
 
   app.post("/register", async (req, res) => {
     const { email, firstName, lastName, mobile, password } = req.body;
+    console.log("password: ", password);
+    console.log("mobile: ", mobile);
     let errormessage = null;
     try {
       if (password.length < 6) {
         errormessage = "Password should be at least 6 characters long.";
         res.render("register", { errormessage });
       } else {
-        await user
+        await csfleClientPatientsColl
           .insertOne({
             email: email,
             firstName: firstName,
             lastName: lastName,
-            "key-id": "demo-data-key",
             mobile: mobile,
             password: password,
           })
@@ -65,7 +85,7 @@ const getDb = async () => {
   });
 
   async function getAllUser() {
-    return await user.find({}).toArray();
+    return await csfleClientPatientsColl.find({}).toArray();
   }
 
   app.get("/table", async (req, res) => {
@@ -73,21 +93,19 @@ const getDb = async () => {
     console.log("search: ", search);
 
     try {
-      const foundUsers = await user
-        .find({
-          $or: [
-            // { firstName: { $regex: search } },
-            { lastName: { $regex: search } },
-          ],
-        })
-        .toArray();
+      const query = {
+        // "bloodType": 'ABC'
+        lastName: search.trim(),
+        // $or: [{ bloodType: "AB" }, { ssn: 97871132 }],
+      };
+      const foundUsers = await csfleClientPatientsColl.find(query).toArray();
       console.log("foundUsers: ", foundUsers);
       res.render("secrets", { success: null, error: null, data: foundUsers });
       // return foundUsers;
     } catch (error) {
       console.error(error);
-      const data = await getAllUser();
-      res.render("secrets", { success: null, error: error, data: data });
+      // const data = await getAllUser();
+      res.render("secrets", { success: null, error: error, data: [] });
       // throw error;
     }
   });
@@ -96,13 +114,15 @@ const getDb = async () => {
     const { username, password } = req.body;
     let error = null;
     try {
-      const foundUser = await user.findOne({ email: username });
+      const foundUser = await csfleClientPatientsColl.findOne({
+        email: username,
+      });
       if (foundUser != null) {
         if (foundUser && foundUser.password == password) {
           const success = "Login successfully";
           const data = await getAllUser();
-          // console.log('data: ', data);
-          res.render("secrets", { success, error: null, data: data });
+          console.log('data: ', data);
+          res.render("secrets", { success: success, error: null, data: data });
         } else {
           error = "Invalid password ⚠";
           res.render("login", { error });
@@ -117,7 +137,7 @@ const getDb = async () => {
     }
   });
 };
-getDb();
+main();
 
 app.listen(3000, async () => {
   console.log("Server is running at port 3000");
