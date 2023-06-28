@@ -70,7 +70,7 @@ const getDb = async () => {
 
   app.get("/table", async (req, res) => {
     const { search, firstName, lastName } = req.query;
-    console.log('search: ', search);
+    console.log("search: ", search);
     // const filter = {
     //   $or: [
     //     // { firstName: { $regex: regexQuery } },
@@ -81,26 +81,21 @@ const getDb = async () => {
     //   ],
     // };
     try {
-      const foundUsers = await user.findOne({ lastName: "patel" });
+      const foundUsers = await user
+        .find({
+          $or: [
+            { firstName: { $regex: search } },
+            // { lastName: search },
+          ],
+        })
+        .toArray();
       console.log("foundUsers: ", foundUsers);
-      return foundUsers;
+      res.render("secrets", { success: null, data: foundUsers });
+      // return foundUsers;
     } catch (error) {
       console.error(error);
       throw error;
     }
-
-    // const searchFilter = {
-    //   $or: [
-    //     { firstName: search },
-    //     { lastName: search },
-    //     { email: search },
-    //     // { mobile: search },
-    //   ],
-    // };
-    // console.log('searchFilter: ', searchFilter);
-
-    // const searchData = await user.find({firstName: search}).toArray();
-    // console.log('searchData: ', searchData);
   });
 
   app.post("/login", async (req, res) => {
