@@ -46,8 +46,6 @@ module.exports = {
     /**
      * Creates a unique, partial index in the key vault collection
      * on the ``keyAltNames`` field.
-     *
-     * @param {MongoClient} client
      */
     async ensureUniqueIndexOnKeyVault(client) {
       try {
@@ -67,15 +65,10 @@ module.exports = {
       }
     }
 
-    /**
-     * In the guide, https://www.mongodb.com/docs/drivers/security/client-side-field-level-encryption-guide/,
-     * we create the data key and then show that it is created by
-     * retreiving it using a findOne query. Here, in implementation, we only
-     * create the key if it doesn't already exist, ensuring we only have one
-     * local data key.
-     *
-     * @param {MongoClient} client
-     */
+    // * we create the data key and then show that it is created by
+    // * retreiving it using a findOne query. Here, in implementation, we only
+    // * create the key if it doesn't already exist, ensuring we only have one local data key
+
     async findOrCreateDataKey(client) {
       const encryption = new ClientEncryption(client, {
         keyVaultNamespace: this.keyVaultNamespace,
@@ -98,13 +91,13 @@ module.exports = {
       return dataKey["_id"].toString("base64");
     }
 
-    async getRegularClient() {
-      const client = new MongoClient(this.connectionString, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      });
-      return await client.connect();
-    }
+    // async getRegularClient() {
+    //   const client = new MongoClient(this.connectionString, {
+    //     useNewUrlParser: true,
+    //     useUnifiedTopology: true,
+    //   });
+    //   return await client.connect();
+    // }
 
     async getCsfleEnabledClient(schemaMap = null) {
       if (schemaMap === null) {
@@ -122,10 +115,16 @@ module.exports = {
           schemaMap,
         },
       });
-      return await client.connect();
+      return await client
+        .connect()
+        .then(console.log("database connected successfully"));
     }
 
+    // Define encryption schema
+    // Here we use random generator local key
+    // userDB is our database and users is our collection
     createJsonSchemaMap(dataKey) {
+      console.log("genrating schemaMap...");
       return {
         "userDB.users": {
           bsonType: "object",

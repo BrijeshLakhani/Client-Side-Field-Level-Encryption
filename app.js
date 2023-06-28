@@ -24,13 +24,13 @@ Run make-data-key.js and ensure you copy and paste the output into client.js
     throw err;
   }
 
-  regularClient = await kmsClient.getRegularClient();
+  // regularClient = await kmsClient.getRegularClient();
   let schemaMap = kmsClient.createJsonSchemaMap(dataKey);
   csfleClient = await kmsClient.getCsfleEnabledClient(schemaMap);
 
-  const regularClientPatientsColl = regularClient
-    .db(DBName)
-    .collection(CollectionName);
+  // const regularClientPatientsColl = regularClient
+  //   .db(DBName)
+  //   .collection(CollectionName);
   const csfleClientPatientsColl = csfleClient
     .db(DBName)
     .collection(CollectionName);
@@ -89,9 +89,7 @@ Run make-data-key.js and ensure you copy and paste the output into client.js
   }
 
   app.get("/table", async (req, res) => {
-    const { search, firstName, lastName } = req.query;
-    console.log("search: ", search);
-
+    const { search, field, selectField } = req.query;
     try {
       let query = {};
       if (search) {
@@ -103,8 +101,11 @@ Run make-data-key.js and ensure you copy and paste the output into client.js
           ],
         };
       }
-      const foundUsers = await csfleClientPatientsColl.find(query).toArray();
-      console.log("foundUsers: ", foundUsers);
+      const foundUsers = await csfleClientPatientsColl
+        .find(query)
+        .sort({ [field]: -1 })
+        .toArray();
+      // console.log("foundUsers: ", foundUsers);
       res.render("secrets", { success: null, error: null, data: foundUsers });
       // return foundUsers;
     } catch (error) {

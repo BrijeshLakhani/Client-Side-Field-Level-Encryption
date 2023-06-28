@@ -35,7 +35,7 @@ This README would normally document whatever steps are necessary to get your app
 3. Go to your file project
 4. Run in terminal: ```npm install -g @angular/cli```
 5. Then: ```npm install```
-6. The:  ```node make_data_key.js```
+6. The:  ```node make-data-key.js```
 7. And: ```npm start``` run in local: ```npm run start:dev```
 
 8. Navigate to [localhost:3000](localhost:3000)
