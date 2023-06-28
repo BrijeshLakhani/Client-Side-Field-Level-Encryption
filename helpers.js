@@ -91,13 +91,13 @@ module.exports = {
       return dataKey["_id"].toString("base64");
     }
 
-    // async getRegularClient() {
-    //   const client = new MongoClient(this.connectionString, {
-    //     useNewUrlParser: true,
-    //     useUnifiedTopology: true,
-    //   });
-    //   return await client.connect();
-    // }
+    async getRegularClient() {
+      const client = new MongoClient(this.connectionString, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      });
+      return await client.connect();
+    }
 
     async getCsfleEnabledClient(schemaMap = null) {
       if (schemaMap === null) {

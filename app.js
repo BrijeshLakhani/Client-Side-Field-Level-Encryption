@@ -13,7 +13,7 @@ const DBName = "userDB";
 const CollectionName = "users";
 
 const main = async () => {
-  let dataKey = "10BxjMS8T0GvMqnkuMZk8Q=="; // change this to the base64 encoded data key generated from make-data-key.js
+  let dataKey = "xKEHVJiLQSKq+DshkjFp8A=="; // change this to the base64 encoded data key generated from make-data-key.js
   if (dataKey === null) {
     // Error.stackTraceLimit = ed
     let err = new Error(
@@ -53,8 +53,6 @@ Run make-data-key.js and ensure you copy and paste the output into client.js
 
   app.post("/register", async (req, res) => {
     const { email, firstName, lastName, mobile, password } = req.body;
-    console.log("password: ", password);
-    console.log("mobile: ", mobile);
     let errormessage = null;
     try {
       if (password.length < 6) {
