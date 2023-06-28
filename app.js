@@ -93,11 +93,16 @@ Run make-data-key.js and ensure you copy and paste the output into client.js
     console.log("search: ", search);
 
     try {
-      const query = {
-        // "bloodType": 'ABC'
-        lastName: search.trim(),
-        // $or: [{ bloodType: "AB" }, { ssn: 97871132 }],
-      };
+      let query = {};
+      if (search) {
+        query = {
+          $or: [
+            { lastName: search.trim() },
+            { firstName: search.trim() },
+            { mobile: search.trim() },
+          ],
+        };
+      }
       const foundUsers = await csfleClientPatientsColl.find(query).toArray();
       console.log("foundUsers: ", foundUsers);
       res.render("secrets", { success: null, error: null, data: foundUsers });
@@ -121,7 +126,7 @@ Run make-data-key.js and ensure you copy and paste the output into client.js
         if (foundUser && foundUser.password == password) {
           const success = "Login successfully";
           const data = await getAllUser();
-          console.log('data: ', data);
+          console.log("data: ", data);
           res.render("secrets", { success: success, error: null, data: data });
         } else {
           error = "Invalid password ⚠";
