@@ -40,3 +40,6 @@ This README would normally document whatever steps are necessary to get your app
 8. And: ```npm start``` run in local: 
 9. Navigate to [localhost:3000](localhost:3000)
 
+## CSFLE setup Documentation
+
+How to use MongoDB Client-Side Field Level Encryption (CSFLE) with Node.js [Documentation](https://www.mongodb.com/developer/languages/javascript/client-side-field-level-encryption-csfle-mongodb-node/)
